@@ -1,0 +1,124 @@
+app-name: "MyComplexApplication"
+app-version: "1.0.0"
+database:
+    connection:
+        host: "localhost"
+        port: 3306
+        user: "root"
+        password: "secret"
+        options:
+            - "charset=utf8mb4"
+            - "ssl=true"
+    pool:
+        max_connections: 50
+        timeout: 30
+
+cache:
+    type: redis
+    config:
+        host: "redis-service"
+        port: 6379
+        db: 2
+        cluster-nodes:
+            - host: "redis-node1"
+              port: 7001
+            - host: "redis-node2"
+              port: 7002
+        options:
+            timeout: 5
+            persistent: true
+
+services:
+    http:
+        endpoint: "https://api.example.com"
+        headers:
+            X-Api-Key: "somekey123"
+            X-Custom-Header: "value"
+        retry:
+            attempts: 3
+            delay: 1000
+        proxies:
+            - host: "proxy1.example.com"
+              port: 8080
+            - host: "proxy2.example.com"
+              port: 8081
+    message-queue:
+        broker: "kafka"
+        kafka-config:
+            bootstrap-servers:
+                - "kafka1:9092"
+                - "kafka2:9092"
+            security:
+                protocol: "SASL_SSL"
+                sasl-mechanism: "PLAIN"
+                sasl-username: "kafkaUser"
+                sasl-password: "kafkaPass"
+        topics:
+            main-topic:
+                partitions: 3
+                replication-factor: 2
+            secondary-topic:
+                partitions: 2
+                replication-factor: 2
+                tags:
+                    - "important"
+                    - "backup"
+
+security:
+    jwt:
+        secret-key: "supersecretjwtkey"
+        algorithm: "HS256"
+        expire-seconds: 3600
+    oauth:
+        client-id: "myclientid"
+        client-secret: "myclientsecret"
+        token-uri: "https://auth.example.com/oauth/token"
+        scopes:
+            - "read"
+            - "write"
+            - "admin"
+
+features:
+    new-ui: true
+    beta-flags:
+        - "experimental-feature-1"
+        - "experimental-feature-2"
+    rollout:
+        percentages:
+            feature-x: 50
+            feature-y: 20
+        groups:
+            - name: "test-group"
+              conditions:
+                  country: "US"
+                  user-tier: "premium"
+            - name: "beta-group"
+              conditions:
+                  user-type: "beta-tester"
+                  device:
+                      type: "mobile"
+                      platform: "android"
+
+logging:
+    level: "debug"
+    format: "json"
+    destinations:
+        - type: "file"
+          path: "/var/log/app.log"
+          max-size: "10MB"
+        - type: "stdout"
+
+i18n:
+    default-locale: "en_US"
+    supported-locales:
+        - "en_US"
+        - "de_DE"
+        - "fr_FR"
+        - "es_ES"
+    translations:
+        common:
+            hello: "Hello"
+            goodbye: "Goodbye"
+        errors:
+            not-found: "Resource not found"
+            server-error: "Internal server error"

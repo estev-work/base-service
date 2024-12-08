@@ -1,0 +1,129 @@
+application:
+    name: "EnterpriseService"
+    environment: "production"
+    version: "2.5.1"
+
+infrastructure:
+    load-balancer:
+        type: "nginx"
+        config:
+            servers:
+                - host: "app-server-1"
+                  port: 8080
+                  weight: 2
+                - host: "app-server-2"
+                  port: 8080
+                  weight: 3
+            health-check:
+                path: "/health"
+                interval-ms: 5000
+    cdn:
+        provider: "cloudflare"
+        settings:
+            cache-ttl: 3600
+            compression: true
+            fallback-host: "cdn-backup.example.com"
+
+integrations:
+    payment-gateway:
+        provider: "stripe"
+        api-key: "stripe_api_key_123"
+        webhook-endpoint: "https://service.example.com/payments/webhook"
+        supported-currencies:
+            - "USD"
+            - "EUR"
+            - "GBP"
+        retries:
+            max: 5
+            delay-ms: 2000
+    crm-system:
+        url: "https://crm.example.com"
+        auth:
+            type: "oauth2"
+            token-endpoint: "https://crm.example.com/oauth/token"
+            client-id: "crmClientId"
+            client-secret: "crmClientSecret"
+        features:
+            lead-sync: true
+            account-update: true
+
+security:
+    firewalls:
+        internal:
+            rules:
+                - action: "allow"
+                  source: "10.0.0.0/8"
+                  protocol: "tcp"
+                  port: 80
+                - action: "deny"
+                  source: "0.0.0.0/0"
+                  protocol: "all"
+        external:
+            rules:
+                - action: "allow"
+                  source: "0.0.0.0/0"
+                  protocol: "tcp"
+                  port: 443
+    ssl:
+        enabled: true
+        certificate-path: "/etc/ssl/certs/service.crt"
+        private-key-path: "/etc/ssl/private/service.key"
+        protocols:
+            - "TLSv1.2"
+            - "TLSv1.3"
+
+monitoring:
+    prometheus:
+        endpoint: "http://prometheus.example.com"
+        scrape-interval: 15
+    alerting:
+        pagerduty:
+            integration-key: "pagerduty_integration_key"
+            severity-levels:
+                critical: "CRITICAL"
+                warning: "WARNING"
+                info: "INFO"
+        email:
+            recipients:
+                - "ops@example.com"
+                - "dev@example.com"
+            smtp-server:
+                host: "smtp.example.com"
+                port: 587
+                use-tls: true
+
+features:
+    rollout-strategies:
+        canary:
+            percentage: 10
+            conditions:
+                region: "us-east-1"
+        blue-green:
+            active: "blue"
+            stand-by: "green"
+            switch-delay-ms: 30000
+    feature-toggles:
+        new-dashboard: true
+        legacy-auth: false
+
+localization:
+    default-locale: "en_US"
+    locales:
+        - "en_US"
+        - "fr_FR"
+        - "ja_JP"
+    messages:
+        welcome: "Welcome to our service"
+        farewell: "Thank you for using our service"
+
+backup:
+    schedule: "0 2 * * *"
+    retention-days: 7
+    destinations:
+        - type: "s3"
+          bucket: "service-backups"
+          region: "us-west-2"
+          encryption: "AES256"
+        - type: "gcs"
+          bucket: "service-backups-gcs"
+          location: "US"
