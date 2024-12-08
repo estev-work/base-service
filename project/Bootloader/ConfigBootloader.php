@@ -37,7 +37,7 @@ readonly class ConfigBootloader implements BootloaderInterface
                     $interface = $attrInstance->interface;
                     $implementation = $class;
 
-                    $container->singleton($interface, fn() => new $implementation());
+                    $container->scoped($interface, fn() => new $implementation());
                 }
             }
         } catch (\Throwable $exception) {

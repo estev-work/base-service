@@ -48,4 +48,12 @@ interface ContainerInterface extends PsrContainerInterface
      * @return void
      */
     public function resetScoped(): void;
+
+    /**
+     * Удаление временных (scoped) сервисов.
+     *
+     * @param string $abstract
+     * @return void
+     */
+    public function removeScope(string $abstract): void;
 }

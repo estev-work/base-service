@@ -22,4 +22,9 @@ class ScopeManager
     {
         $this->scopedServices = [];
     }
+
+    public function remove(string $abstract): void
+    {
+        unset($this->scopedServices[$abstract]);
+    }
 }

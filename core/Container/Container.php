@@ -89,4 +89,9 @@ class Container implements ContainerInterface
     {
         $this->scopeManager->clear();
     }
+
+    public function removeScope(string $abstract): void
+    {
+        $this->scopeManager->remove($abstract);
+    }
 }
