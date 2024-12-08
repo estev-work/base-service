@@ -6,7 +6,6 @@ namespace Project\Bootloader;
 
 use Core\Bootloader\BootloaderInterface;
 use Core\Config\Attributes\Config;
-use Core\Container\ContainerInterface;
 use ReflectionClass;
 use SplFileInfo;
 
@@ -18,7 +17,7 @@ readonly class ConfigBootloader implements BootloaderInterface
     ) {
     }
 
-    public function init(ContainerInterface $container): void
+    public function init(): void
     {
         try {
             $classes = $this->scanDirectoryForClasses($this->generatedDir, $this->configNamespace);
@@ -36,8 +35,7 @@ readonly class ConfigBootloader implements BootloaderInterface
                     $attrInstance = $attrs[0]->newInstance();
                     $interface = $attrInstance->interface;
                     $implementation = $class;
-
-                    $container->scoped($interface, fn() => new $implementation());
+                    container()->scoped($interface, fn() => new $implementation());
                 }
             }
         } catch (\Throwable $exception) {

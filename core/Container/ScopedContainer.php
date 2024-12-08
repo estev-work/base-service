@@ -11,7 +11,7 @@ class ScopedContainer
 
     public function __construct()
     {
-        $this->container = $GLOBALS['container'];
+        $this->container = container();
     }
 
     public function make(string $abstract, array $parameters = []): object
