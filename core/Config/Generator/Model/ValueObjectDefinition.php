@@ -11,6 +11,7 @@ final class ValueObjectDefinition
      */
     public function __construct(
         public string $className,
-        public array $properties
+        public array $properties,
+        public array $path
     ) {}
 }

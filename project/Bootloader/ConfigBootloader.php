@@ -41,7 +41,7 @@ readonly class ConfigBootloader implements BootloaderInterface
                 }
             }
         } catch (\Throwable $exception) {
-            return;
+            throw new \RuntimeException(message: 'Init config failed', code: 0, previous: $exception);
         }
     }
 

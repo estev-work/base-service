@@ -8,7 +8,7 @@ require 'vendor/autoload.php';
 require 'core/bootstrap.php';
 
 bootstrap();
-
+$container = $GLOBALS['container'];
 new ConfigBootloader()->init($container);
 
 try {

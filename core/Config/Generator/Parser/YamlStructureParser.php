@@ -12,7 +12,7 @@ final class YamlStructureParser
 {
     public function parse(array $data, string $filename): ConfigStructure
     {
-        $className = ucfirst($filename).'Config';
+        $className = ucfirst($filename) . 'Config';
         $interfaceName = ucfirst($filename) . 'ConfigInterface';
         $valueObjects = [];
         $properties = $this->parseLevel($data, $valueObjects, []);
@@ -21,7 +21,8 @@ final class YamlStructureParser
         foreach ($valueObjects as $vo) {
             $voDefs[] = new ValueObjectDefinition(
                 $vo['className'],
-                array_map(fn($p) => $this->arrToProperty($p), $vo['properties'])
+                array_map(fn($p) => $this->arrToProperty($p), $vo['properties']),
+                array_map(fn($elem) => ucfirst($this->normalizeName($elem)), $vo['path'])
             );
         }
 
@@ -33,15 +34,15 @@ final class YamlStructureParser
         );
     }
 
-    private function arrToProperty(array $p): PropertyDefinition
+    private function arrToProperty(array $properties): PropertyDefinition
     {
         return new PropertyDefinition(
-            $p['name'],
-            $p['originalName'],
-            $p['type'],
-            $p['complex'],
-            $p['isArray'] ?? false,
-            $p['voClass'] ?? null
+            $properties['name'],
+            $properties['originalName'],
+            $properties['type'],
+            $properties['complex'],
+            $properties['isArray'] ?? false,
+            $properties['voClass'] ?? null
         );
     }
 
@@ -142,8 +143,6 @@ final class YamlStructureParser
     {
         $parts = explode('-', $key);
         $parts = array_map('ucfirst', $parts);
-        $parts = implode('', $parts);
-        $parts .= 'Data';
-        return $parts;
+        return implode('', $parts);
     }
 }

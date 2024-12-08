@@ -14,13 +14,17 @@ final readonly class ValueObjectGenerator
 
     public function generate(ValueObjectDefinition $vo, string $fileName, string $baseVoNamespace, string $baseVoDir): void
     {
-        $voClassName = $vo->className;
-        $voDir = $baseVoDir . '/' . $voClassName;
+        // Генерация пути на основе вложенности
+        $path = implode(DIRECTORY_SEPARATOR, $vo->path);
+        $namespacePath = implode('\\', $vo->path);
+
+        $voDir = $baseVoDir . DIRECTORY_SEPARATOR . $path;
         if (!is_dir($voDir)) {
             mkdir($voDir, 0777, true);
         }
 
-        $voNamespace = $baseVoNamespace . '\\' . $voClassName;
+        // Генерация пространства имён
+        $voNamespace = $baseVoNamespace . '\\' . $namespacePath;
 
         $propertiesCode = "";
         $assignmentsCode = "";
@@ -33,7 +37,7 @@ final readonly class ValueObjectGenerator
             $assignmentsCode .= $this->renderConstructorAssignment($prop->name, $assignment) . "\n";
 
             if ($prop->voClass !== null) {
-                $fullyQualifiedClassName = $baseVoNamespace . '\\' . $prop->voClass . '\\' . $prop->voClass;
+                $fullyQualifiedClassName = $baseVoNamespace . '\\' . $namespacePath . '\\' . $prop->voClass. '\\' . $prop->voClass;
                 $uses[$fullyQualifiedClassName] = $fullyQualifiedClassName;
             }
 
@@ -46,14 +50,14 @@ final readonly class ValueObjectGenerator
         $voCode = $this->renderer->render($templatePath, [
             'namespace' => $voNamespace,
             'uses' => rtrim($usesSection),
-            'className' => $voClassName,
+            'className' => $vo->className,
             'properties' => rtrim($propertiesCode),
             'constructorAssignments' => rtrim($assignmentsCode),
             'getters' => rtrim($gettersCode),
             'yamlFileName' => $fileName,
         ]);
 
-        file_put_contents($voDir . '/' . $voClassName . '.php', $voCode);
+        file_put_contents($voDir . DIRECTORY_SEPARATOR . $vo->className . '.php', $voCode);
     }
 
     private function renderProperty(string $type, string $name): string

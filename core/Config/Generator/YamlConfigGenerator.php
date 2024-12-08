@@ -58,7 +58,11 @@ final readonly class YamlConfigGenerator
             }
 
             foreach ($structure->valueObjects as $vo) {
-                $voGen->generate($vo, $filename,$classNamespace . '\\VO', $voBaseDir);
+                $voGen->generate(vo: $vo,
+                    fileName: $filename,
+                    baseVoNamespace: $classNamespace . '\\VO',
+                    baseVoDir: $voBaseDir
+                );
             }
 
             $classCode = $classGen->generate($structure, $filename, $classNamespace, $interfaceNamespace, $interfaceName);
