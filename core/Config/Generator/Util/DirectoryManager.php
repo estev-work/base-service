@@ -17,7 +17,12 @@ final class DirectoryManager
             return;
         }
 
-        $files = array_diff(scandir($folder), ['.', '..']);
+        $files = scandir($folder);
+        if ($files === false) {
+            throw new \RuntimeException("Failed to read the contents of the directory: {$folder}");
+        }
+
+        $files = array_diff($files, ['.', '..']);
         foreach ($files as $file) {
             $filePath = $folder . DIRECTORY_SEPARATOR . $file;
             if (is_dir($filePath)) {

@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Core\Container;
 
-use Core\Container\Exceptions\ContainerException;
 use Core\Container\Exceptions\NotFoundException;
 
 class Container implements ContainerInterface
 {
+    /**
+     * @var array<class-string, callable|class-string>
+     */
     protected array $bindings = [];
+    /**
+     * @var array<class-string, mixed|null>
+     */
     protected array $instances = [];
     protected ScopeManager $scopeManager;
 
@@ -17,6 +22,7 @@ class Container implements ContainerInterface
     {
         $this->scopeManager = new ScopeManager();
     }
+
 
     public function bind(string $abstract, callable|string $concrete): void
     {
@@ -28,11 +34,18 @@ class Container implements ContainerInterface
         $this->bindings[$abstract] = $concrete;
         $this->instances[$abstract] = null;
     }
+
     public function scoped(string $abstract, callable|string $concrete): void
     {
         $this->bindings[$abstract] = $concrete;
     }
-    public function get(string $id)
+
+    /**
+     * @param class-string $id
+     * @return mixed
+     * @throws NotFoundException
+     */
+    public function get(string $id): mixed
     {
         if ($service = $this->scopeManager->get($id)) {
             return $service;
@@ -44,16 +57,16 @@ class Container implements ContainerInterface
         return $this->resolve($id);
     }
 
+    /**
+     * @param class-string $id
+     * @return bool
+     */
     public function has(string $id): bool
     {
         return isset($this->bindings[$id]) || isset($this->instances[$id]);
     }
 
-    /**
-     * @throws NotFoundException
-     * @throws ContainerException
-     */
-    public function make(string $abstract, array $parameters = []): object
+    public function make(string $abstract, array $parameters = []): mixed
     {
         if(!$this->bindings[$abstract]) {
             throw new NotFoundException("Cannot resolve  {$abstract}");
@@ -62,9 +75,11 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @throws ContainerException
+     * @param class-string $abstract
+     * @param array<class-string, mixed> $parameters
+     * @return mixed
      */
-    protected function resolve(string $abstract, array $parameters = []): object
+    protected function resolve(string $abstract, array $parameters = []): mixed
     {
         if (isset($this->instances[$abstract])) {
             return $this->instances[$abstract];

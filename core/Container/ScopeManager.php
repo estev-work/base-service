@@ -6,14 +6,26 @@ namespace Core\Container;
 
 class ScopeManager
 {
+    /**
+     * @var array<class-string, mixed>
+     */
     private array $scopedServices = [];
 
-    public function add(string $abstract, object $service): void
+    /**
+     * @param class-string $abstract
+     * @param mixed $service
+     * @return void
+     */
+    public function add(string $abstract, mixed $service): void
     {
         $this->scopedServices[$abstract] = $service;
     }
 
-    public function get(string $abstract): ?object
+    /**
+     * @param class-string $abstract
+     * @return mixed|null
+     */
+    public function get(string $abstract): mixed
     {
         return $this->scopedServices[$abstract] ?? null;
     }
@@ -23,6 +35,10 @@ class ScopeManager
         $this->scopedServices = [];
     }
 
+    /**
+     * @param class-string $abstract
+     * @return void
+     */
     public function remove(string $abstract): void
     {
         unset($this->scopedServices[$abstract]);

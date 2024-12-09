@@ -2,6 +2,7 @@
 
 namespace Core\Container;
 
+use Core\Container\Exceptions\NotFoundException;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 interface ContainerInterface extends PsrContainerInterface
@@ -9,8 +10,8 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Регистрация зависимости (singleton или обычная).
      *
-     * @param string $abstract
-     * @param callable|string $concrete
+     * @param class-string $abstract
+     * @param callable|class-string $concrete
      * @return void
      */
     public function bind(string $abstract, callable|string $concrete): void;
@@ -18,8 +19,8 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Регистрация singleton.
      *
-     * @param string $abstract
-     * @param callable|string $concrete
+     * @param class-string $abstract
+     * @param callable|class-string $concrete
      * @return void
      */
     public function singleton(string $abstract, callable|string $concrete): void;
@@ -27,8 +28,8 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Регистрация временных (scoped) зависимостей.
      *
-     * @param string $abstract
-     * @param callable|string $concrete
+     * @param class-string $abstract
+     * @param callable|class-string $concrete
      * @return void
      */
     public function scoped(string $abstract, callable|string $concrete): void;
@@ -36,11 +37,12 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Создание нового экземпляра.
      *
-     * @param string $abstract
-     * @param array $parameters
-     * @return object
+     * @param class-string $abstract
+     * @param array<class-string, mixed> $parameters
+     * @return mixed
+     * @throws NotFoundException
      */
-    public function make(string $abstract, array $parameters = []): object;
+    public function make(string $abstract, array $parameters = []): mixed;
 
     /**
      * Сброс временных (scoped) сервисов.
@@ -52,7 +54,7 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Удаление временных (scoped) сервисов.
      *
-     * @param string $abstract
+     * @param class-string $abstract
      * @return void
      */
     public function removeScope(string $abstract): void;

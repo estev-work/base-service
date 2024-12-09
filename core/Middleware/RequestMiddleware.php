@@ -15,7 +15,7 @@ class RequestMiddleware
         $this->scopeManager = $scopeManager;
     }
 
-    public function handle(callable $next)
+    public function handle(callable $next): mixed
     {
         $this->scopeManager->clear();
 
