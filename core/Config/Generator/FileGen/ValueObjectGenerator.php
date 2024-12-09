@@ -78,6 +78,10 @@ final readonly class ValueObjectGenerator
         return str_replace(['{type}', '{methodName}', '{propertyName}'], [$type, $methodName, $propertyName], $template);
     }
 
+    /**
+     * @param array<string, string> $uses
+     * @return string
+     */
     private function buildUseSection(array $uses): string
     {
         $result = "";

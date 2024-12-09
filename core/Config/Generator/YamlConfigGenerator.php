@@ -32,9 +32,16 @@ final readonly class YamlConfigGenerator
         $classGen = new ClassGenerator($renderer);
         $voGen = new ValueObjectGenerator($renderer);
 
+        /** @var list<string>|false $files */
         $files = glob($this->yamlDir . '/*.yaml');
+
+        if (!$files) return;
+
+        /** @var string $filePath */
         foreach ($files as $filePath) {
             $filename = pathinfo($filePath, PATHINFO_FILENAME);
+
+            /** @var array<string, mixed> $data */
             $data = Yaml::parseFile($filePath);
 
             $structure = $parser->parse($data, $filename);
